@@ -1,0 +1,36 @@
+.card-cars {
+  height: 425px !important;
+  width: 350px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 20px;
+  margin: 20px;
+  border: 0.1rem solid #d6d6d6;
+  box-shadow: 0 0.4rem 0.4rem 0 rgba(0, 0, 0, 0.15);
+  transition: 0.6s;
+}
+
+.car-img {
+  max-width: 100%;
+}
+
+.show-details {
+  cursor: pointer;
+  user-select: none;
+}
+
+.show-details:hover {
+  color: red;
+  user-select: none;
+}
+
+.card-detail {
+  background-color: #ededed;
+  padding: 5px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  margin: 4px;
+}
