@@ -1,0 +1,13 @@
+.renter-text {
+  margin-right: 5px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--bs-heading-color);
+  text-decoration: none;
+}
+
+.renter-img {
+    /* width: 70%; */
+    /* max-width: 30vw; */
+    height: 30vh;
+}

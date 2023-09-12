@@ -1,5 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Home } from "../../pages/home";
+import { Register } from "../../pages/register";
+import { Renter } from "../../pages/renter";
 
 export const Root = () => {
   return (
@@ -9,6 +11,20 @@ export const Root = () => {
           path="/"
           element={
             <Home /*increaseFontSize={increaseFontSize} decreaseFontSize={decreaseFontSize} checar={checar}  HandledarkMode={HandledarkMode}*/
+            />
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <Register /*increaseFontSize={increaseFontSize} decreaseFontSize={decreaseFontSize} checar={checar}  HandledarkMode={HandledarkMode}*/
+            />
+          }
+        />
+        <Route
+          path="/renter"
+          element={
+            <Renter /*increaseFontSize={increaseFontSize} decreaseFontSize={decreaseFontSize} checar={checar}  HandledarkMode={HandledarkMode}*/
             />
           }
         />
