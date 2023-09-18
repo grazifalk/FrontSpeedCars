@@ -6,6 +6,7 @@ import { Header } from "../../components/header";
 import { Footer } from "../../components/footer";
 import { SearchComponent } from "../../components/search-component";
 import { FiFilter } from "react-icons/fi";
+import { BackToTopButton } from "../../components/button-back-to-top";
 
 export const Home = () => {
   const [cars, setCars] = useState([]);
@@ -56,38 +57,35 @@ export const Home = () => {
   return (
     <>
       <Header />
-      <Row
+      <div
         style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
           paddingTop: "20px",
-          paddingRight: "225px",
-          paddingLeft: "225px",
         }}
       >
-        <Col>
-          <SearchComponent
-            filterBySearch={filterBySearch}
-            placeholder="Buscar carros..."
-          />
-        </Col>
-        <Col>
-          <Form.Group>
-            <InputGroup>
-              <InputGroup.Text>
-                <FiFilter title="Filtro" />
-              </InputGroup.Text>
+        <SearchComponent
+          filterBySearch={filterBySearch}
+          placeholder="Buscar carros..."
+        />
+        <Form.Group style={{marginLeft: "5px"}}>
+          <InputGroup>
+            <InputGroup.Text>
+              <FiFilter title="Filtro" />
+            </InputGroup.Text>
 
-              <Form.Select
-                value={buttonAll}
-                onChange={(e) => filterButton(e.target.value)}
-              >
-                <option value="todos">Todos</option>
-                <option value="true">Disponíveis</option>
-                <option value="false">Alugados</option>
-              </Form.Select>
-            </InputGroup>
-          </Form.Group>
-        </Col>
-      </Row>
+            <Form.Select
+              value={buttonAll}
+              onChange={(e) => filterButton(e.target.value)}
+            >
+              <option value="todos">Todos</option>
+              <option value="true">Disponíveis</option>
+              <option value="false">Alugados</option>
+            </Form.Select>
+          </InputGroup>
+        </Form.Group>
+      </div>
 
       <Row
         style={{
@@ -112,7 +110,7 @@ export const Home = () => {
               <CardCars key={car.id} car={car} />
             ))}
         </div>
-
+        <BackToTopButton />
         <Footer />
       </Row>
     </>

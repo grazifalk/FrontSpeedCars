@@ -1,52 +1,90 @@
-import "./style.css";
 import { useState } from "react";
-import { Card, Col, Row } from "react-bootstrap";
-import { ButtonDefault } from "../button-default";
-import { Link } from "react-router-dom";
-import Renter from "../../assets/renter.svg";
 import ApiFindByCPF from "../../services/Api/ApiFindByCPF";
 import ApiFindByCNH from "../../services/Api/ApiFindByCNH";
+import { ButtonDefault } from "../button-default";
+import { Card, Col, Row } from "react-bootstrap";
+import Renter from "../../assets/renter.svg";
+import { Link } from "react-router-dom";
+import "./style.css";
 
 export const RenterCard = () => {
-  const [formData, setFormData] = useState({
-      documentType: "", // Valor inicial vazio
-      documentValue: "", // Valor inicial vazio para o número do documento
-  });
+  const [documentType, setDocumentType] = useState("");
+  const [cpf, setCPF] = useState("");
+  const [cnh, setCNH] = useState("");
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+  const handleDocumentTypeChange = (event) => {
+    setDocumentType(event.target.value);
   };
 
-  const findByCPF = async (cpf) => {
-      const res = await ApiFindByCPF.RenterFindByCPF(cpf);
-      console.log(res.data.data);
-    return res.data.data;
-  };
-
-  const findByCNH = async (driverLicenseNumber) => {
-      const res = await ApiFindByCNH.RenterFindByCNH(driverLicenseNumber);
-      console.log(res);
-    return res.data.data;
+  const handleDocumentValueChange = (e) => {
+    if (documentType === "CPF") {
+      setCPF(e.target.value);
+    } else if (documentType === "CNH") {
+      setCNH(e.target.value);
+    }
   };
 
   const handleSearch = async () => {
-    if (formData.documentType === "CPF") {
-      const data = await findByCPF(formData.documentValue);
-        return data;
-    } else if (formData.documentType === "CNH") {
-      const data = await findByCNH(formData.documentValue);
-      return data;
+    if (documentType === "CPF") {
+      try {
+        const res = await ApiFindByCPF.RenterFindByCPF(cpf);
+        setData(res.data);
+        setError(null);
+      } catch (error) {
+        console.error("Erro ao buscar locatário:", error);
+        // setError("Erro ao buscar locatário");
+        setData({});
+      }
+    } else if (documentType === "CNH") {
+      try {
+        const res = await ApiFindByCNH.RenterFindByCNH(cnh);
+        setData(res.data);
+        setError(null);
+      } catch (error) {
+        console.error("Erro ao buscar locatário:", error);
+        // setError("Erro ao buscar locatário");
+        setData({});
+      }
     }
-    };
-    
+  };
+
+  function formatarData(date) {
+    const dataObj = new Date(date);
+    const dia = String(dataObj.getDate()).padStart(2, "0");
+    const mes = String(dataObj.getMonth() + 1).padStart(2, "0");
+    const ano = dataObj.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function formatarTelefone(telefone) {
+    // Remove todos os caracteres não numéricos
+    const numeros = telefone.replace(/\D/g, "");
+
+    // Verifica se tem 11 dígitos (incluindo o DDD)
+    if (numeros.length === 11) {
+      return `(${numeros.slice(0, 2)})${numeros.slice(2, 7)}-${numeros.slice(
+        7
+      )}`;
+    } else {
+      // Se não tiver 11 dígitos, assume que é um número inválido
+      return "Número de telefone inválido";
+    }
+  }
+
   return (
     <div style={{ minHeight: "75vh" }}>
       <Row style={{ display: "flex", flexDirection: "column" }}>
-        <Col style={{ display: "flex", justifyContent: "center" }}>
+        <Col
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <h2 className="mt-2">Buscar Locatário</h2>
           <Card
             className="mt-2"
             style={{
@@ -54,74 +92,99 @@ export const RenterCard = () => {
               flexDirection: "row",
               padding: "20px",
               height: "10vh",
-              width: "40vw",
+              width: "35vw",
               justifyContent: "space-between",
             }}
           >
-            <label className="form-label">Tipo de Documento:</label>
+            <label className="form-label">Buscar por:</label>
+
             <select
               name="documentType"
-              value={formData.documentType}
-              onChange={handleChange}
+              value={documentType}
+              onChange={handleDocumentTypeChange}
             >
               <option value="">Selecione</option>
               <option value="CPF">CPF</option>
               <option value="CNH">CNH</option>
             </select>
+
             <input
               type="text"
-              name="documentValue"
-              value={formData.documentValue}
-              onChange={handleChange}
-              placeholder="Número do documento..."
+              placeholder="Número do Documento..."
+              value={cpf}
+              onChange={handleDocumentValueChange}
             />
-            <ButtonDefault bgColor="#008000" textColor="#fff" onClick={handleSearch}>
+            <ButtonDefault
+              bgColor="#008000"
+              textColor="#fff"
+              action={handleSearch}
+            >
               Buscar
             </ButtonDefault>
           </Card>
         </Col>
-        <Col
-          className="mt-3"
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <Card
-            style={{ display: "flex", flexDirection: "row", padding: "10px" }}
+        {error && <p>{error}</p>}
+        {data && Object.keys(data).length > 0 && (
+          <Col
+            className="mt-3"
+            style={{ display: "flex", justifyContent: "center" }}
           >
-            <span className="renter-text">Locatário não encontrado.</span>
-            <Link to="/register" className="links-navbar">
-              Cadastrar?
-            </Link>
-          </Card>
-        </Col>
-        <Col
-          className="mt-3"
-          style={{ display: "flex", justifyContent: "center" }}
-        >
-          <Card
-            style={{ padding: "10px", display: "flex", flexDirection: "row" }}
-          >
-            <div>
-              <img src={Renter} className="renter-img" />
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
+            <Card
+              style={{ padding: "10px", display: "flex", flexDirection: "row" }}
             >
-              <span>
-                <strong>Nome:</strong> Graziela Falk
-              </span>
-              <span>
-                <strong>Data de Nascimento:</strong> 17/08/1990
-              </span>
-              <span>
-                <strong>Telefone:</strong>
-              </span>
-            </div>
-          </Card>
-        </Col>
+              <div style={{ display: "flex" }}>
+                <img
+                  src={Renter}
+                  className="renter-img"
+                  alt="Locatário"
+                  style={{ height: "20vh" }}
+                />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <span>
+                  <strong>Nome:</strong> {data.name}
+                </span>
+
+                <span>
+                  <strong>Data de Nascimento:</strong>{" "}
+                  {formatarData(data.birth)}
+                </span>
+
+                <span>
+                  <strong>Telefone:</strong>{" "}
+                  {formatarTelefone(data.phoneNumber)}
+                </span>
+
+                <span>
+                  <strong>E-mail:</strong> {data.email}
+                </span>
+              </div>
+            </Card>
+          </Col>
+        )}
+        {data && Object.keys(data).length === 0 && (
+          <Col
+            className="mt-3"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <Card
+              style={{ display: "flex", flexDirection: "row", padding: "10px" }}
+            >
+              <span className="renter-text">Locatário não encontrado.</span>
+
+              <Link to="/register" className="link-register">
+                Cadastrar?
+              </Link>
+            </Card>
+          </Col>
+        )}
       </Row>
     </div>
   );

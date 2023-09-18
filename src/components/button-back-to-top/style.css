@@ -1,0 +1,28 @@
+.back-to-top {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px !important;
+  height: 40px !important;
+  background-color: red;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 26px;
+  z-index: 1000;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.back-to-top.show {
+  display: block;
+}
+
+.back-to-top.hide {
+  display: none;
+}
+
+.back-to-top:hover {
+  opacity: 0.8;
+}
